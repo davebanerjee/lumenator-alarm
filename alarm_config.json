@@ -1,0 +1,14 @@
+{
+    "alarm_time": "07:00",
+    "fade_duration": 30,
+    "enabled": true,
+    "last_modified": "2024-12-25T00:00:00",
+    "days_active": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    "weekend_alarm_time": "09:00",
+    "weekend_enabled": false,
+    "brightness_settings": {
+        "start": 0,
+        "end": 100,
+        "curve": "linear"
+    }
+}
