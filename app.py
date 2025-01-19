@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from functools import wraps
 import json
+from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 import hashlib
 import secrets
 
+# Load environment variables
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(32)  # Generate a secure secret key
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 # Configuration file path
 CONFIG_FILE = 'alarm_config.json'
@@ -28,10 +32,8 @@ def save_config(config):
     with open(CONFIG_FILE, 'w') as f:
         json.dump(config, f)
 
-# Password protection
 def check_password(password):
-    # TODO: In production, use a secure password hash stored in a separate config file
-    correct_password_hash = hashlib.sha256('your_secure_password'.encode()).hexdigest()
+    correct_password_hash = hashlib.sha256(os.getenv('PASSWORD').encode()).hexdigest()
     return hashlib.sha256(password.encode()).hexdigest() == correct_password_hash
 
 def login_required(f):
