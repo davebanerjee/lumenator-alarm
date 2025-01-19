@@ -2,6 +2,7 @@
 {% block content %}
 <h1>Smart Alarm Control</h1>
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div>
         <label for="alarm_time">Alarm Time:</label>
         <input type="time" id="alarm_time" name="alarm_time" value="{{ config.alarm_time }}" required>
@@ -13,5 +14,9 @@
     </div>
     <button type="submit">Save Settings</button>
 </form>
-<p><a href="{{ url_for('logout') }}">Logout</a></p>
+
+<form action="{{ url_for('logout') }}" method="POST" style="display: inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="link-button">Logout</button>
+</form>
 {% endblock %}

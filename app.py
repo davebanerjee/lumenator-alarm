@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from functools import wraps
 import json
 from dotenv import load_dotenv
@@ -13,10 +16,18 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
-# Configuration file path
-CONFIG_FILE = 'alarm_config.json'
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
 
-# Default configuration
+# Initialize rate limiter
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=['20 per day', '5 per hour'],
+    storage_uri='memory://',
+)
+
+CONFIG_FILE = 'alarm_config.json'
 DEFAULT_CONFIG = {
     'alarm_time': '07:00',
     'fade_duration': 30  # Duration in minutes for light fade-in
@@ -45,6 +56,7 @@ def login_required(f):
     return decorated_function
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     if request.method == 'POST':
         if check_password(request.form['password']):
@@ -53,7 +65,7 @@ def login():
         return render_template('login.html', error='Invalid password')
     return render_template('login.html')
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     session.pop('authenticated', None)
     return redirect(url_for('login'))
@@ -68,6 +80,16 @@ def index():
         save_config(config)
         return redirect(url_for('index'))
     return render_template('index.html', config=config)
+
+# Add error handler for rate limiting
+@app.errorhandler(429)  # 429 is the rate limit exceeded error code
+def ratelimit_handler(e):
+    return render_template('rate_limit.html', error=str(e.description)), 429
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('csrf_error.html', reason=e.description), 400
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
