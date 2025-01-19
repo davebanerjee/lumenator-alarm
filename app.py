@@ -10,16 +10,13 @@ from datetime import datetime, timedelta
 import hashlib
 import secrets
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
-# Initialize CSRF protection
-csrf = CSRFProtect(app)
 
-# Initialize rate limiter
+csrf = CSRFProtect(app)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
@@ -81,8 +78,7 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', config=config)
 
-# Add error handler for rate limiting
-@app.errorhandler(429)  # 429 is the rate limit exceeded error code
+@app.errorhandler(429)
 def ratelimit_handler(e):
     return render_template('rate_limit.html', error=str(e.description)), 429
 
@@ -92,4 +88,4 @@ def handle_csrf_error(e):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
