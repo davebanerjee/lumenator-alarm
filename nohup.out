@@ -1,0 +1,31 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.179:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [19/Jan/2025 19:45:41] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [19/Jan/2025 19:45:41] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2025 19:45:48] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2025 19:45:49] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2025 19:45:50] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2025 19:45:50] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2025 19:45:51] "[31m[1mGET /login HTTP/1.1[0m" 429 -
+127.0.0.1 - - [19/Jan/2025 19:45:53] "[31m[1mGET /login HTTP/1.1[0m" 429 -
+127.0.0.1 - - [19/Jan/2025 19:45:54] "[31m[1mGET /login HTTP/1.1[0m" 429 -
+127.0.0.1 - - [19/Jan/2025 19:45:55] "[31m[1mGET /login HTTP/1.1[0m" 429 -
+127.0.0.1 - - [19/Jan/2025 19:45:58] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [19/Jan/2025 19:45:59] "[31m[1mGET /login HTTP/1.1[0m" 429 -
+127.0.0.1 - - [19/Jan/2025 19:51:08] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jan/2025 19:51:11] "[32mPOST /login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [19/Jan/2025 19:51:11] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Jan/2025 10:01:13] "[31m[1mPOST /logout HTTP/1.1[0m" 400 -
+127.0.0.1 - - [20/Jan/2025 10:01:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Jan/2025 10:01:17] "[32mPOST /logout HTTP/1.1[0m" 302 -
+127.0.0.1 - - [20/Jan/2025 10:01:17] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [20/Jan/2025 10:01:20] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [20/Jan/2025 10:01:24] "[32mPOST /login HTTP/1.1[0m" 302 -
+127.0.0.1 - - [20/Jan/2025 10:01:24] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Jan/2025 10:01:26] "[32mPOST /logout HTTP/1.1[0m" 302 -
+127.0.0.1 - - [20/Jan/2025 10:01:26] "GET /login HTTP/1.1" 200 -

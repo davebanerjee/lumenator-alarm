@@ -45,7 +45,7 @@ class AlarmController:
             else:
                 self.pwm.ChangeDutyCycle(0)  # Lights off
                 
-            time.sleep(1)  # Check every second
+            time.sleep(60)  # Check every min
 
     def cleanup(self):
         self.pwm.stop()
