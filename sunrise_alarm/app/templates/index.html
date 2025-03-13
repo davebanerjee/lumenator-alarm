@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sunrise Alarm{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Sunrise Alarm Dashboard</h1>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>Light Status</h4>
+                <p>
+                    {% if is_light_on %}
+                    <span class="badge bg-success">ON</span> at {{ current_brightness }}% brightness
+                    {% else %}
+                    <span class="badge bg-danger">OFF</span>
+                    {% endif %}
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('main.manual_control') }}" class="btn btn-primary">Manual Control</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h4>Next Scheduled Alarm</h4>
+                {% if next_alarm %}
+                <p>The next alarm is scheduled for <strong>{{ next_alarm.strftime('%A, %B %d at %I:%M %p') }}</strong></p>
+                {% else %}
+                <p>No alarms are currently scheduled.</p>
+                {% endif %}
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('main.schedule') }}" class="btn btn-primary">View Schedule</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

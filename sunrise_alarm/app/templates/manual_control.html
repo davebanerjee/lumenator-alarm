@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Manual Control - Sunrise Alarm{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Manual Light Control</h4>
+            </div>
+            <div class="card-body">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Current Status</h5>
+                        <p>
+                            {% if current_brightness > 0 %}
+                            <span class="badge bg-success">ON</span> at {{ current_brightness }}% brightness
+                            {% else %}
+                            <span class="badge bg-danger">OFF</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <form method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.brightness.label(class="form-label") }}
+                        <input type="range" class="form-range" min="0" max="100" step="1" 
+                               id="brightness-slider" value="{{ form.brightness.data }}">
+                        {{ form.brightness(class="form-control", id="brightness-value") }}
+                        {% for error in form.brightness.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        {{ form.submit_on(class="btn btn-success") }}
+                        {{ form.submit_off(class="btn btn-danger") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Connect range slider to input field
+    const slider = document.getElementById('brightness-slider');
+    const value = document.getElementById('brightness-value');
+    
+    slider.addEventListener('input', function() {
+        value.value = slider.value;
+    });
+    
+    value.addEventListener('input', function() {
+        slider.value = value.value;
+    });
+</script>
+{% endblock %}

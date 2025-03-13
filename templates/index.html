@@ -1,22 +1,173 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>Smart Alarm Control</h1>
-<form method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div>
-        <label for="alarm_time">Alarm Time:</label>
-        <input type="time" id="alarm_time" name="alarm_time" value="{{ config.alarm_time }}" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise Alarm Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sunrise Alarm Control</h1>
+            <form action="{{ url_for('logout') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </header>
+        
+        <main>
+            <section class="alarm-config">
+                <h2>Alarm Settings</h2>
+                
+                <form action="{{ url_for('index') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="form-group">
+                        <label for="alarm_time">Alarm Time:</label>
+                        <input type="time" id="alarm_time" name="alarm_time" 
+                               value="{{ config.alarm_time }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fade_duration">Fade Duration (minutes):</label>
+                        <input type="number" id="fade_duration" name="fade_duration" 
+                               value="{{ config.fade_duration }}" min="1" max="120" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="max_brightness">Maximum Brightness (%):</label>
+                        <input type="number" id="max_brightness" name="max_brightness" 
+                               value="{{ config.max_brightness }}" min="1" max="100" required>
+                    </div>
+                    
+                    <div class="form-group checkbox">
+                        <input type="checkbox" id="enabled" name="enabled" 
+                               {% if config.enabled %}checked{% endif %}>
+                        <label for="enabled">Enable Alarm</label>
+                    </div>
+                    
+                    <button type="submit" class="save-btn">Save Settings</button>
+                </form>
+            </section>
+            
+            <section class="manual-control">
+                <h2>Manual Control</h2>
+                
+                <div class="control-buttons">
+                    <button id="btn-on" class="ctrl-btn">Start Sunrise</button>
+                    <button id="btn-off" class="ctrl-btn">Turn Off</button>
+                </div>
+                
+                <div class="brightness-control">
+                    <label for="brightness">Brightness:</label>
+                    <input type="range" id="brightness" min="0" max="100" value="0">
+                    <span id="brightness-value">0%</span>
+                </div>
+            </section>
+            
+            <section class="status">
+                <h2>Status</h2>
+                <div id="status-container">
+                    <p>Loading status...</p>
+                </div>
+                <button id="refresh-status" class="refresh-btn">Refresh</button>
+            </section>
+        </main>
     </div>
-    <div>
-        <label for="fade_duration">Fade-in Duration (minutes):</label>
-        <input type="number" id="fade_duration" name="fade_duration" 
-               value="{{ config.fade_duration }}" min="1" max="60" required>
-    </div>
-    <button type="submit">Save Settings</button>
-</form>
-
-<form action="{{ url_for('logout') }}" method="POST" style="display: inline;">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button type="submit" class="link-button">Logout</button>
-</form>
-{% endblock %}
+    
+    <script>
+        // JavaScript for dynamic controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manual control buttons
+            const btnOn = document.getElementById('btn-on');
+            const btnOff = document.getElementById('btn-off');
+            const brightnessSlider = document.getElementById('brightness');
+            const brightnessValue = document.getElementById('brightness-value');
+            const refreshStatus = document.getElementById('refresh-status');
+            
+            // CSRF token from the form
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            
+            // Function to send control commands
+            async function sendControl(action, data = {}) {
+                try {
+                    const response = await fetch('/api/control', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({ action, ...data })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to send command');
+                    }
+                    
+                    const result = await response.json();
+                    alert(result.message);
+                    
+                    // Refresh status after action
+                    fetchStatus();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+            
+            // Function to fetch status
+            async function fetchStatus() {
+                try {
+                    const response = await fetch('/api/status');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch status');
+                    }
+                    
+                    const status = await response.json();
+                    displayStatus(status);
+                    
+                    // Update brightness slider
+                    if (status['Current brightness']) {
+                        const brightness = parseFloat(status['Current brightness']);
+                        brightnessSlider.value = brightness;
+                        brightnessValue.textContent = brightness.toFixed(1) + '%';
+                    }
+                } catch (error) {
+                    document.getElementById('status-container').innerHTML = 
+                        '<p class="error">Error fetching status: ' + error.message + '</p>';
+                }
+            }
+            
+            // Function to display status information
+            function displayStatus(status) {
+                let html = '<ul>';
+                
+                for (const [key, value] of Object.entries(status)) {
+                    html += `<li><strong>${key}:</strong> ${value}</li>`;
+                }
+                
+                html += '</ul>';
+                document.getElementById('status-container').innerHTML = html;
+            }
+            
+            // Event listeners
+            btnOn.addEventListener('click', () => sendControl('on'));
+            btnOff.addEventListener('click', () => sendControl('off'));
+            
+            brightnessSlider.addEventListener('input', function() {
+                const value = this.value;
+                brightnessValue.textContent = value + '%';
+            });
+            
+            brightnessSlider.addEventListener('change', function() {
+                sendControl('set_brightness', { level: parseInt(this.value) });
+            });
+            
+            refreshStatus.addEventListener('click', fetchStatus);
+            
+            // Initial status fetch
+            fetchStatus();
+        });
+    </script>
+</body>
+</html>

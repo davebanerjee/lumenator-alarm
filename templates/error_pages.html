@@ -1,0 +1,37 @@
+<!-- templates/rate_limit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limit Exceeded - Sunrise Alarm</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Rate Limit Exceeded</h1>
+        <p>{{ error }}</p>
+        <p>Please try again later.</p>
+        <a href="{{ url_for('login') }}" class="btn">Back to Login</a>
+    </div>
+</body>
+</html>
+
+<!-- templates/csrf_error.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Error - Sunrise Alarm</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Security Error</h1>
+        <p>{{ reason }}</p>
+        <p>Please try again.</p>
+        <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

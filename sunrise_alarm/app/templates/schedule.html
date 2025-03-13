@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Alarm Schedule - Sunrise Alarm{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Alarm Schedule</h1>
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Fade Duration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for day in days %}
+                        <tr>
+                            <td>{{ day }}</td>
+                            <td>
+                                {% if alarms[day].enabled %}
+                                <span class="badge bg-success">Enabled</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ alarms[day].alarm_time.strftime('%I:%M %p') }}</td>
+                            <td>{{ alarms[day].fade_duration }} minutes</td>
+                            <td>
+                                <a href="{{ url_for('main.edit_schedule', day_id=loop.index0) }}" class="btn btn-sm btn-primary">Edit</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+"""
+Systemd service file for auto-restart.
+"""
+"""
+[Unit]
+Description=Sunrise Alarm Service
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/sunrise_alarm
+ExecStart=/home/pi/sunrise_alarm/venv/bin/python run.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+"""
